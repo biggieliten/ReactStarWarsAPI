@@ -9,8 +9,6 @@ type WeatherType = {
 };
 
 const Weather = () => {
-  //   const [longitude, setLongitude] = useState("");
-  //   const [latitude, setLatitude] = useState("");
   const longitudeRef = useRef<HTMLInputElement>(null);
   const latitudeRef = useRef<HTMLInputElement>(null);
   const [weather, setWeather] = useState<WeatherType | null>(null);
@@ -21,15 +19,22 @@ const Weather = () => {
       const result = await fetch(url);
       const data = await result.json();
 
-      setWeather({
-        longitude: data.longitude,
-        latitude: data.latitude,
-        temperature: data.current.temperature_2m,
-      });
+      if (!ignore) {
+        setWeather({
+          longitude: data.longitude,
+          latitude: data.latitude,
+          temperature: data.current.temperature_2m,
+        });
+      }
     };
-    if (url) {
-      fetchData();
-    }
+    let ignore = false;
+    fetchData();
+    return () => {
+      ignore = true;
+    };
+    // if (url) {
+    //   fetchData();
+    // }
   }, [url]);
 
   return (
@@ -47,7 +52,7 @@ const Weather = () => {
             )
           }
         >
-          Run
+          Search
         </button>
       </div>
 
