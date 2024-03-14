@@ -1,7 +1,10 @@
 import { useEffect, useState, useRef } from "react";
+import CityToCoordinates from "./CityToCoordinates/CityToCoordinates";
 
 const apiURL = "https://api.open-meteo.com/v1/forecast?";
+// const apiURL = "https://api.open-meteo.com/v1/forecast?";
 
+//
 type WeatherType = {
   longitude: string;
   latitude: string;
@@ -13,6 +16,12 @@ const Weather = () => {
   const latitudeRef = useRef<HTMLInputElement>(null);
   const [weather, setWeather] = useState<WeatherType | null>(null);
   const [url, setUrl] = useState("");
+
+  const [coordinates, setCoordinates] = useState({ latitude: 0, longitude: 0 });
+
+  const handleCoordinates = ({ activeCoordinates }: any) => {
+    setCoordinates(activeCoordinates);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,16 +38,15 @@ const Weather = () => {
     };
     let ignore = false;
     fetchData();
+    console.log("weather", coordinates);
     return () => {
       ignore = true;
     };
-    // if (url) {
-    //   fetchData();
-    // }
   }, [url]);
 
   return (
     <>
+      <CityToCoordinates onCoordinatesChange={handleCoordinates} />
       <div>
         <label htmlFor="long">Longitude </label>
         <input type="text" name="long" ref={longitudeRef} />
@@ -48,7 +56,7 @@ const Weather = () => {
         <button
           onClick={() =>
             setUrl(
-              `${apiURL}latitude=${latitudeRef.current?.value}&longitude=${longitudeRef.current?.value}&current=temperature_2m`
+              `${apiURL}latitude=${coordinates.latitude}&longitude=${coordinates.longitude}&current=temperature_2m`
             )
           }
         >

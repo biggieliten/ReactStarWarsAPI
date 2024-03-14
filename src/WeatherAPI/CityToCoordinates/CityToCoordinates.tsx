@@ -8,7 +8,11 @@ type CoordinatesType = {
   longitude: number;
 };
 
-const CityToCoordinates = () => {
+// type PassCoordinates = {
+//   onCoordinatesChange: number;
+// };
+
+const CityToCoordinates = ({ onCoordinatesChange }: any) => {
   const [coordinates, setCoordinates] = useState({} as CoordinatesType);
   //   const [latitide, setLatitude] = useState("" as CoordinatesType);
   const [url, setUrl] = useState("");
@@ -20,9 +24,15 @@ const CityToCoordinates = () => {
       if (url) {
         const result = await fetch(url);
         const data = await result.json();
+        const lon = data[0].longitude;
+        const lat = data[0].latitude;
 
         if (!ignore) {
           setCoordinates({
+            latitude: lon,
+            longitude: lat,
+          });
+          onCoordinatesChange({
             latitude: data[0].latitude,
             longitude: data[0].longitude,
           });
@@ -31,6 +41,7 @@ const CityToCoordinates = () => {
     };
     let ignore = false;
     fetchCoordinates();
+    console.log("coordinates", onCoordinatesChange);
     return () => {
       ignore = true;
     };
